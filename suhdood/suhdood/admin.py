@@ -5,6 +5,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from suhdood.models.account import Account
 from suhdood.models.share import Share
+from suhdood.models.url import Url
 
 
 class AccountCreationForm(forms.ModelForm):
@@ -80,12 +81,32 @@ class AccountAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 class ShareAdmin(admin.ModelAdmin):
-    list_display = ('sender', 'receiver', 'shared_url')
+    list_display = ('sender', 'receiver', 'shared_url', 'date', 'viewed')
     raw_id_fields = ('sender', 'receiver')
+
+class UrlCreationForm(forms.ModelForm):
+    url = forms.CharField(label='Url', widget=forms.URLInput)    
+
+    class Meta:
+        model = Url
+        exclude = ('hashed_url', 'url_string')
+
+    def save(self, commit=True):
+        url = super(UrlCreationForm, self).save(commit=False)
+        url.hashed_url = url.hash_url(self.cleaned_data["url"])
+        url.url_string = self.cleaned_data["url"]
+        if commit:
+            url.save()
+        return url
+
+class UrlAdmin(admin.ModelAdmin):
+    form = UrlCreationForm
+    list_display = ('hashed_url', 'url_string')
 
 # Now register the new models...
 admin.site.register(Account, AccountAdmin)
 admin.site.register(Share, ShareAdmin)
+admin.site.register(Url, UrlAdmin)
 # ... and, since we're not using Django's built-in permissions,
 # unregister the Group model from admin.
 admin.site.unregister(Group)

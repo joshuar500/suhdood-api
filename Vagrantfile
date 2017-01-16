@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "bento/ubuntu-16.04"
+  config.vm.box = "ubuntu/trusty32"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -47,7 +47,12 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     ## Display the VirtualBox GUI when booting the machine
     # vb.gui = true
-    vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+    # vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
+    ### Change network card to PCnet-FAST III
+    # For NAT adapter
+    vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
+    # For host-only adapter
+    # vb.customize ["modifyvm", :id, "--nictype2", "Am79C973"]
     ## Customize the amount of memory on the VM:
     # vb.memory = "1024"
   end

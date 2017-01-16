@@ -19,4 +19,9 @@ cd ../../vagrant
 pip install django
 pip install djangorestframework
 
+# if project not yet created
 django-admin startproject projectname
+
+# after creating the models
+python manage.py makemigrations <app-name>
+python manage.py migrate
