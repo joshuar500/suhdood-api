@@ -2,12 +2,14 @@
 """Account.py
 """
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+import uuid
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from suhdood.models.share import Share
 
 class AccountManager(BaseUserManager):
     def create_user(self, email, display_name, password=None):
@@ -41,10 +43,12 @@ class AccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-class Account(AbstractBaseUser):
+class Account(AbstractBaseUser, PermissionsMixin):
     """This Account model is for all
     new user accounts
     """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     email = models.EmailField(
         verbose_name='email',
@@ -52,10 +56,11 @@ class Account(AbstractBaseUser):
         unique=True,
     )
 
-    display_name = models.CharField(max_length=255)
+    display_name = models.CharField(max_length=255, unique=True)
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     REQUIRED_FIELDS = ['display_name',]
     USERNAME_FIELD = 'email'
