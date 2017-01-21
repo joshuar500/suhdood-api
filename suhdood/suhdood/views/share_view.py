@@ -46,4 +46,15 @@ def share(request):
                 )
         return Response(status=204)
     return Response()
+
+@api_view(['GET'])
+def next(request):
+    if request.method == 'GET':
+        uid = request.user.id
+        get_next_share = Share.objects.filter(receiver=uid, viewed=False).order_by('date')[0]
+        # TODO: if there are no shares from friends, return random URLs
+        get_next_share.viewed = True
+        get_next_share.save()
+        serialized_share = ShareSerializer(get_next_share, context={'request': request})
+        return Response(serialized_share.data, status=200)
         
