@@ -50,9 +50,13 @@ Vagrant.configure("2") do |config|
     # vb.customize ["modifyvm", :id, "--cableconnected1", "on"]
     ### Change network card to PCnet-FAST III
     # For NAT adapter
-    vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
+    # vb.customize ["modifyvm", :id, "--nictype1", "Am79C973"]
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
     # For host-only adapter
     # vb.customize ["modifyvm", :id, "--nictype2", "Am79C973"]
+    ## Customize the amount of memory on the VM:
+    ## Customize the amount of memory on the VM:
     ## Customize the amount of memory on the VM:
     # vb.memory = "1024"
   end

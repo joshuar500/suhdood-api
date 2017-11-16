@@ -31,12 +31,15 @@ def sent_shares(request):
 def share(request):
     if request.method == 'POST':
         from_user = request.user
+        print('from user: ', from_user)
         to_user_id = request.data['to_user_id']
+        print('to_user_id: ', to_user_id)
         url_string = request.data['url_string']
+        print('url_string: ', url_string)
 
         to_user_account = Account.objects.filter(id=to_user_id).first()
 
-        if Friend.objects.are_friends(request.user, to_user_account):
+        if Friend.objects.are_friends(from_user, to_user_account):
             print('we friends!')
             created_url = Url.objects.create_url(url_string)
             created_share = Share.objects.create(
