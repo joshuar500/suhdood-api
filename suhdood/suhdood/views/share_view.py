@@ -31,12 +31,15 @@ def sent_shares(request):
 def share(request):
     if request.method == 'POST':
         from_user = request.user
+        print('from user: ', from_user)
         to_user_id = request.data['to_user_id']
+        print('to_user_id: ', to_user_id)
         url_string = request.data['url_string']
+        print('url_string: ', url_string)
 
         to_user_account = Account.objects.filter(id=to_user_id).first()
 
-        if Friend.objects.are_friends(request.user, to_user_account):
+        if Friend.objects.are_friends(from_user, to_user_account):
             print('we friends!')
             created_url = Url.objects.create_url(url_string)
             created_share = Share.objects.create(
@@ -46,4 +49,15 @@ def share(request):
                 )
         return Response(status=204)
     return Response()
+
+@api_view(['GET'])
+def next(request):
+    if request.method == 'GET':
+        uid = request.user.id
+        get_next_share = Share.objects.filter(receiver=uid, viewed=False).order_by('date')[0]
+        # TODO: if there are no shares from friends, return random URLs
+        get_next_share.viewed = True
+        get_next_share.save()
+        serialized_share = ShareSerializer(get_next_share, context={'request': request})
+        return Response(serialized_share.data, status=200)
         

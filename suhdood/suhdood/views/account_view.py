@@ -13,6 +13,29 @@ class AccountViewSet(viewsets.ModelViewSet, mixins.ListModelMixin):
     serializer_class = AccountSerializer
     permission_classes = [IsAuthenticated]
 
+@api_view(['GET', 'POST'])
+def sign_up(request):
+    if request.method == 'POST':
+        email = request.data['email']
+        display_name = request.data['display_name']
+        password = request.data['password']
+
+        # does account already exist?
+        account = Account.objects.filter(email=email).first()
+
+        if account:
+            print('Account already exists')
+            return Response(status=499)
+        else:
+            Account.objects.create_user(
+                email = email,
+                display_name = display_name,
+                password=password
+            )
+
+        return Response(status=200)
+    return Response()
+
 @api_view(['GET'])
 def get_user_friends(request, display_name):
     if request.method == 'GET':

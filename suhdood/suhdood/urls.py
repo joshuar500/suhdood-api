@@ -22,6 +22,8 @@ urlpatterns = [
     url(r'^received_shares/$', share_view.received_shares),
     url(r'^sent_shares/$', share_view.received_shares),
     url(r'^share/$', share_view.share),
+    url(r'^next/$', share_view.next),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^login/', obtain_jwt_token)
+    url(r'^login/', obtain_jwt_token),
+    url(r'^sign_up/$', account_view.sign_up)
 ]
